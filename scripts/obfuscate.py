@@ -1,3 +1,4 @@
+import re
 import os
 from dotenv import load_dotenv
 
@@ -12,7 +13,8 @@ def get_sensitive_map():
 
 def obfuscate(text: str, terms: dict) -> str:
     for term, token in terms.items():
-        text = text.replace(term, token)
+        pattern = re.compile(re.escape(term), re.IGNORECASE)
+        text = pattern.sub(token, text)
     return text
 
 def deobfuscate(text: str, terms: dict) -> str:
