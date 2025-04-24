@@ -1762,6 +1762,22 @@ llama-index-core = ">=0.12.0,<0.13.0"
 llama-parse = ">=0.5.0"
 
 [[package]]
+name = "llama-index-vector-stores-chroma"
+version = "0.4.1"
+description = "llama-index vector_stores chroma integration"
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["main"]
+files = [
+    {file = "llama_index_vector_stores_chroma-0.4.1-py3-none-any.whl", hash = "sha256:42200af4fa5c8df820b865825d1b506cecb922c8fbd7421eda8a5609b390c1d5"},
+    {file = "llama_index_vector_stores_chroma-0.4.1.tar.gz", hash = "sha256:70ee74ccf304adda04171d014e483759c68a1c92f679ea2ca2e6b6f45b6fef08"},
+]
+
+[package.dependencies]
+chromadb = ">=0.5.17"
+llama-index-core = ">=0.12.0,<0.13.0"
+
+[[package]]
 name = "llama-parse"
 version = "0.6.12"
 description = "Parse files into RAG-Optimized formats."
@@ -4551,4 +4567,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "28f2f22e7d913a59e80dd46ffe41c28505c914e11b6ddd06b9c8c6020fe7b459"
+content-hash = "9197f5ba98ff82ff18484ad6d7d1e0228b0a2ee1cace655c0693cd51ca111ee5"
