@@ -1,109 +1,105 @@
-# 🧠 Personal Second Brain Assistant (Desktop App)
+# 🧠 Elycia: A Local Second Brain
 
-This project aims to build a **cross-platform desktop app** (macOS + Windows) that acts as a personal "second brain": capturing knowledge snippets, organizing them, protecting sensitive content, and enabling retrieval and LLM-powered conversations.
-
----
-
-## ✅ Goal
-
-Create a keyboard-activated app that:
-- Opens a lightweight input window for quick notes
-- Records those notes (date-aware)
-- Obfuscates sensitive content using a user-defined mapping
-- Stores both raw and obfuscated versions
-- Indexes the obfuscated notes using LLM embeddings
-- Allows natural language queries and ChatGPT-style conversations
-- Can store conversations into the second brain on command
+Elycia is a lightweight, privacy-first second brain for developers, powered by your IDE, LlamaIndex, and Markdown. It supports secure, structured, and obfuscated note-taking with natural language search — without relying on cloud services.
 
 ---
 
-## 📦 Feature Breakdown
+## ✅ Features Implemented
 
-### 1. **Quick-Capture Input App (Desktop GUI)**
-- Cross-platform (Electron)
-- Opens via keyboard shortcut
-- Text input field
-- "Submit" triggers save + obfuscation + indexing
-
-### 2. **Note Recording and Organization**
-- Raw note saved as `.md` file under `notes/YYYY-MM-DD.md`
-- Each entry timestamped and separated
-- Obfuscated version saved in parallel (`obfuscated/YYYY-MM-DD.md`)
-- Obfuscation uses predefined dictionary (configurable)
-
-### 3. **Sensitive Info Obfuscation**
-- Custom mapping file (YAML or JSON)
-- Words like company name, project names, or people obfuscated
-- Stored as constants or user-editable config file
-
-### 4. **Indexing System**
-- Uses LlamaIndex for embedding
-- Stores vector index using **Chroma**
-- Works entirely offline, private, and local
-
-### 5. **Natural Language Query Interface**
-- Input box for asking questions like:
-    - "What do I know about requisition IDs?"
-    - "How many Lucidchart links exist for [company]?"
-    - "Is there a Lucidchart on test ID mapping?"
-- Returns answers based on indexed obfuscated notes
-- De-obfuscates tokens in final output
-
-### 6. **LLM Querying (ChatGPT / Claude)**
-- Option to forward user prompt to external LLM API
-- Allow follow-up conversation
-- Option to "Record this chat" → saves to notes + indexes like normal
+- **Note capture via IDE tab**
+  - Run `make note` to open a new markdown note in your IDE
+  - Stored in `notes/YYYY-MM-DD/HH-MM-SS.md`
+- **Automatic obfuscation**
+  - Notes are obfuscated on every save using a `.env` file for sensitive mappings
+  - Output saved to `obfuscated/YYYY-MM-DD/HH-MM-SS.md`
+- **Secure, human-readable token format**
+  - Tokens like `🔐PROJECT_ab12🔐`, `🔐PERSON_9fc3🔐` created using a short hash
+- **Manual indexing**
+  - Run `make index` to embed and index all obfuscated notes using LlamaIndex + Chroma
+  - Recursively processes all files under `./obfuscated/`
+- **No cloud dependency for core flow**
+  - Embedding uses OpenAI only if enabled via `.env` with `OPENAI_API_KEY`
 
 ---
 
-## 🔐 Privacy Model
-- Only obfuscated notes are indexed
-- Raw notes never sent to LLM
-- Decryption only happens client-side at display time
-- Sensitive mapping never leaves your machine
+## 📁 Directory Structure
 
----
-
-## 🛠️ Tech Stack
-
-| Concern        | Selected Option             |
-| -------------- | --------------------------- |
-| GUI            | Electron                    |
-| Note Parsing   | Python                      |
-| Embedding      | LlamaIndex                  |
-| Vector Storage | Chroma                      |
-| LLM API        | OpenAI / Anthropic (Claude) |
-| Packaging      | Poetry                      |
-
----
-
-## 📁 Proposed Project Structure
-
-```
-my-second-brain/
-├── app/                  # GUI app frontend (Electron)
-├── notes/                # Raw markdown notes
-├── obfuscated/           # Obfuscated version of notes
-├── brain/                # Vector indexes (Chroma)
-├── config/
-│   └── sensitive_terms.json
+```bash
+elycia/
+├── notes/                  # Raw notes organized by date
+│   └── 2025-04-30/14-12-33.md
+├── obfuscated/            # Obfuscated versions of notes
+│   └── 2025-04-30/14-12-33.md
+├── brain/                 # Chroma vector store (persisted index)
 ├── scripts/
-│   ├── obfuscate.py
-│   ├── index_notes.py
-│   ├── query_brain.py
-│   └── send_to_llm.py
-├── README.md
-└── pyproject.toml        # Poetry package config
+│   ├── new_note.py        # Opens IDE, watches file, obfuscates on save
+│   ├── index_notes.py     # Indexes obfuscated notes with LlamaIndex
+├── .env                   # Stores SENSITIVE_ tokens for obfuscation
+├── Makefile               # Simplified command entry points
+└── README.md
 ```
 
 ---
 
-## 📌 Next Steps
-1. Define the sensitive term obfuscation format (JSON/YAML)
-2. Scaffold Electron app for note capture
-3. Hook Electron frontend to Python backend via IPC or local API
-4. Build obfuscator and Chroma-compatible indexing system
-5. Implement querying and de-obfuscation
-6. Add OpenAI/Claude integration and record-to-notes feature
+## 🚀 Usage
+
+### 📓 Create a new note
+```bash
+make note
+```
+- Opens IDE (auto-detected: VSCode, PyCharm, nano)
+- On save, content is obfuscated and saved to `obfuscated/`
+
+### 🔍 Index your brain
+```bash
+make index
+```
+- Embeds all obfuscated notes under `./obfuscated/`
+- Saves to Chroma database in `./brain/`
+
+---
+
+## 🔐 Obfuscation Configuration
+
+Add sensitive terms to your `.env` like this:
+```env
+SENSITIVE_CompanyX=COMPANY_a1f3
+SENSITIVE_ProjectZeus=PROJECT_7c2e
+SENSITIVE_Maya=PERSON_b819
+```
+
+Token values are generated using a deterministic short hash.
+
+---
+
+## 🛠 Dependencies
+
+- [Poetry](https://python-poetry.org/) for dependency management
+- [LlamaIndex](https://github.com/jerryjliu/llama_index) for semantic search
+- [Chroma](https://github.com/chroma-core/chroma) for local vector storage
+- [watchexec](https://github.com/watchexec/watchexec) to watch notes on save
+
+To install `watchexec`:
+```bash
+brew install watchexec  # macOS
+# or
+cargo install watchexec-cli
+```
+
+---
+
+## 🧪 Local Testing
+
+- Run `make note` and type some semicolon-separated thoughts
+- Save the file in your IDE
+- Observe the corresponding obfuscated note in `./obfuscated/`
+- Run `make index` to update the semantic index
+
+---
+
+## 📦 Future Plans
+- Add querying support
+- Integrate OpenAI/Claude as optional summarizers
+- Build an Electron UI for conversational recall
 
 ---
