@@ -50,20 +50,34 @@ now = datetime.now()
 date_str = now.strftime("%Y-%m-%d")
 time_str = now.strftime("%H-%M-%S")
 
+# Temporary placeholder file
+temp_file = Path("__temp_note__.md")
+temp_file.touch()
+
+# Open the editor to let the user write
+if shutil.which("code"):
+    subprocess.run(["code", "--wait", str(temp_file)])
+elif shutil.which("pycharm"):
+    subprocess.run(["pycharm", str(temp_file)])
+elif shutil.which("nano"):
+    subprocess.run(["nano", str(temp_file)])
+else:
+    print(f"⚠️ Could not find a known editor. Note created at {temp_file}")
+
+# After editing, check for datetime header
+first_line = temp_file.read_text(encoding="utf-8").splitlines()[0] if temp_file.exists() else ""
+dt_match = re.match(r"^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})", first_line)
+if dt_match:
+    date_str = dt_match.group(1)
+    time_str = dt_match.group(2).replace(":", "-")
+
 notes_dir = Path("notes") / date_str
 notes_dir.mkdir(parents=True, exist_ok=True)
 file_path = notes_dir / f"{time_str}.md"
-file_path.touch()
+file_path.write_text(temp_file.read_text(encoding="utf-8"), encoding="utf-8")
+temp_file.unlink()
 
-if shutil.which("code"):
-    subprocess.Popen(["code", str(file_path)])
-elif shutil.which("pycharm"):
-    subprocess.Popen(["pycharm", str(file_path)])
-elif shutil.which("nano"):
-    subprocess.run(["nano", str(file_path)])
-else:
-    print(f"⚠️ Could not find a known editor. Note created at {file_path}")
-
+# Start watchexec for obfuscation on save
 script_path = Path(__file__).resolve()
 subprocess.Popen([
     "watchexec",
@@ -73,5 +87,5 @@ subprocess.Popen([
     "--", "poetry", "run", "python", str(script_path), "--obfuscate", str(file_path)
 ])
 
-print(f"✅ Note opened and obfuscation watcher started: {file_path}")
+print(f"✅ Note created at {file_path} and obfuscation watcher started")
 sys.exit(0)
