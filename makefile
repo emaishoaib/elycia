@@ -1,6 +1,9 @@
 # Makefile
 
 note:
+	poetry run python scripts/new_note.py
+
+quick_note:
 	poetry run python scripts/add_note.py
 
 obfuscate:
