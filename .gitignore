@@ -1,6 +1,7 @@
 __pycache__/
 poetry.lock
 .env
+brain
 notes
 obfuscated
 
