@@ -6,7 +6,7 @@ import chromadb
 
 # Read markdown files from obfuscated/
 docs = []
-for md_file in Path("obfuscated").glob("*.md"):
+for md_file in Path("obfuscated").rglob("*.md"):
     content = md_file.read_text(encoding="utf-8").strip()
     if content:
         docs.append(Document(text=content, metadata={"filename": md_file.name}))
