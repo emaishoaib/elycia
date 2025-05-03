@@ -9,7 +9,21 @@ docs = []
 for md_file in Path("obfuscated").rglob("*.md"):
     content = md_file.read_text(encoding="utf-8").strip()
     if content:
-        docs.append(Document(text=content, metadata={"filename": md_file.name}))
+        # Extract metadata
+        parts = md_file.parts
+        if "obfuscated" in parts:
+            idx = parts.index("obfuscated")
+            try:
+                date_str = parts[idx + 1]
+                time_str = md_file.stem  # filename without .md
+                metadata = {
+                    "filename": md_file.name,
+                    "date": date_str,
+                    "time": time_str,
+                }
+                docs.append(Document(text=content, metadata=metadata))
+            except IndexError:
+                print(f"⚠️ Could not extract date/time from {md_file}")
 
 if not docs:
     print("⚠️ No documents found in obfuscated/. Nothing to index.")
