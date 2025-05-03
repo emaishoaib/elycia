@@ -14,3 +14,6 @@ index:
 
 query:
 	poetry run python scripts/query_brain.py
+
+sync:
+	poetry run python scripts/sync_obfuscation.py
