@@ -8,7 +8,7 @@ load_dotenv(ENV_PATH)
 
 def obfuscate_token(term: str, category: str) -> str:
     short_hash = hashlib.sha256(term.lower().encode()).hexdigest()[:4]
-    return f"\U0001f510{category.upper()}_{short_hash}\U0001f510"
+    return f"{category.upper()}_{short_hash}"
 
 def normalize_key(term: str) -> str:
     return term.strip().replace(" ", "_")
