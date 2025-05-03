@@ -3,7 +3,7 @@ from datetime import datetime
 
 def get_sensitive_map():
     return {
-        key.replace("SENSITIVE_", ""): value
+        key.replace("SENSITIVE_", "").replace("_", " "): value
         for key, value in os.environ.items()
         if key.startswith("SENSITIVE_")
     }
