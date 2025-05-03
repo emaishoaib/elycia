@@ -4,5 +4,6 @@ poetry.lock
 brain
 notes
 obfuscated
+storage
 
 .idea
