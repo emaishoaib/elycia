@@ -1,8 +1,12 @@
 from pathlib import Path
+
+from dotenv import load_dotenv
 from llama_index.core import VectorStoreIndex, Document
 from llama_index.core.storage.storage_context import StorageContext
 from llama_index.vector_stores.chroma import ChromaVectorStore
 import chromadb
+
+load_dotenv()
 
 # Read markdown files from obfuscated/
 docs = []
@@ -32,8 +36,10 @@ if not docs:
 # Correct Chroma client setup (v0.5.17+)
 chroma_client = chromadb.PersistentClient(path="./brain")
 
+chroma_collection = chroma_client.create_collection("elycia")
+
 # Chroma + LlamaIndex integration
-chroma_store = ChromaVectorStore(chroma_collection="second_brain", client=chroma_client)
+chroma_store = ChromaVectorStore(chroma_collection=chroma_collection, client=chroma_client)
 storage_context = StorageContext.from_defaults(vector_store=chroma_store)
 
 index = VectorStoreIndex.from_documents(docs, storage_context=storage_context)
