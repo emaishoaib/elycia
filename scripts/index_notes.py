@@ -43,6 +43,6 @@ chroma_store = ChromaVectorStore(chroma_collection=chroma_collection, client=chr
 storage_context = StorageContext.from_defaults(vector_store=chroma_store)
 
 index = VectorStoreIndex.from_documents(docs, storage_context=storage_context)
-index.storage_context.persist()
+index.storage_context.persist(persist_dir="./brain")
 
 print(f"✅ Indexed {len(docs)} obfuscated note file(s) into ./brain")
