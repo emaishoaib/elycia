@@ -39,7 +39,9 @@ chroma_client = chromadb.PersistentClient(path="./brain")
 chroma_collection = chroma_client.get_or_create_collection("elycia")
 
 # Chroma + LlamaIndex integration
-chroma_store = ChromaVectorStore(chroma_collection=chroma_collection, client=chroma_client)
+chroma_store = ChromaVectorStore(
+    chroma_collection=chroma_collection, client=chroma_client
+)
 storage_context = StorageContext.from_defaults(vector_store=chroma_store)
 
 index = VectorStoreIndex.from_documents(docs, storage_context=storage_context)

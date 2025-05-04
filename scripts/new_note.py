@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 
+
 def get_sensitive_map():
     return {
         key.replace("SENSITIVE_", "").replace("_", " "): value
@@ -14,11 +15,13 @@ def get_sensitive_map():
         if key.startswith("SENSITIVE_")
     }
 
+
 def obfuscate(text: str, terms: dict) -> str:
     for term, token in terms.items():
         pattern = re.compile(re.escape(term), re.IGNORECASE)
         text = pattern.sub(token, text)
     return text
+
 
 def write_obfuscated_copy(note_path: Path):
     content = note_path.read_text(encoding="utf-8")
@@ -30,11 +33,12 @@ def write_obfuscated_copy(note_path: Path):
         return
 
     idx = parts.index("notes")
-    obf_path = Path("obfuscated").joinpath(*parts[idx + 1:])
+    obf_path = Path("obfuscated").joinpath(*parts[idx + 1 :])
     obf_path.parent.mkdir(parents=True, exist_ok=True)
     obf_path.write_text(obfuscated, encoding="utf-8")
 
     print(f"✅ Obfuscated note saved to {obf_path}")
+
 
 load_dotenv()
 
@@ -57,7 +61,9 @@ else:
     print(f"⚠️ Could not find a known editor. Note created at {temp_file}")
 
 # After editing, check for datetime header
-first_line = temp_file.read_text(encoding="utf-8").splitlines()[0] if temp_file.exists() else ""
+first_line = (
+    temp_file.read_text(encoding="utf-8").splitlines()[0] if temp_file.exists() else ""
+)
 dt_match = re.match(r"^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})", first_line)
 if dt_match:
     date_str = dt_match.group(1)

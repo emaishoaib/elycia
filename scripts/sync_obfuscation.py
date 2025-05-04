@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def get_sensitive_map():
     return {
         key.replace("SENSITIVE_", "").replace("_", " "): value
@@ -12,11 +13,13 @@ def get_sensitive_map():
         if key.startswith("SENSITIVE_")
     }
 
+
 def obfuscate(text: str, terms: dict) -> str:
     for term, token in terms.items():
         pattern = re.compile(re.escape(term), re.IGNORECASE)
         text = pattern.sub(token, text)
     return text
+
 
 def sync_notes():
     notes_root = Path("notes")
@@ -32,6 +35,7 @@ def sync_notes():
         obf_path.parent.mkdir(parents=True, exist_ok=True)
         obf_path.write_text(obfuscated, encoding="utf-8")
         print(f"✅ Synced: {rel_path}")
+
 
 if __name__ == "__main__":
     sync_notes()

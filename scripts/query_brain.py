@@ -11,8 +11,12 @@ load_dotenv()
 
 chroma_client = chromadb.PersistentClient(path="./brain")
 chroma_collection = chroma_client.get_or_create_collection("elycia")
-chroma_store = ChromaVectorStore(chroma_collection=chroma_collection, client=chroma_client)
-storage_context = StorageContext.from_defaults(vector_store=chroma_store, persist_dir="./brain")
+chroma_store = ChromaVectorStore(
+    chroma_collection=chroma_collection, client=chroma_client
+)
+storage_context = StorageContext.from_defaults(
+    vector_store=chroma_store, persist_dir="./brain"
+)
 index = load_index_from_storage(storage_context)
 
 query_engine = index.as_query_engine()
@@ -39,4 +43,4 @@ while True:
         print(f"📄 Result:\n\n{str(response)}")
 
     preview_file.unlink(missing_ok=True)
-    print("\n" + "="*60 + "\n")
+    print("\n" + "=" * 60 + "\n")

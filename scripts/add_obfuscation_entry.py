@@ -6,12 +6,15 @@ ENV_PATH = ".env"
 
 load_dotenv(ENV_PATH)
 
+
 def obfuscate_token(term: str, category: str) -> str:
     short_hash = hashlib.sha256(term.lower().encode()).hexdigest()[:4]
     return f"{category.upper()}_{short_hash}"
 
+
 def normalize_key(term: str) -> str:
     return term.strip().replace(" ", "_")
+
 
 def add_entry(term: str, category: str):
     key = f"SENSITIVE_{normalize_key(term)}"
@@ -25,13 +28,16 @@ def add_entry(term: str, category: str):
                 print(f"⚠️  Entry for '{term}' already exists in .env")
                 return
             if line.strip().endswith(f"={value}"):
-                print(f"⚠️  Obfuscated token '{value}' already exists in .env — possible collision?")
+                print(
+                    f"⚠️  Obfuscated token '{value}' already exists in .env — possible collision?"
+                )
                 return
 
     # Append to .env
     with open(ENV_PATH, "a", encoding="utf-8") as f:
         f.write(f"{key}={value}\n")
     print(f"✅ Added: {key}={value}")
+
 
 if __name__ == "__main__":
     print("Add a new obfuscation mapping to your .env")
