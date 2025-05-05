@@ -56,4 +56,4 @@ index.storage_context.persist(persist_dir="./brain")
 # Update last indexed timestamp
 INDEX_TIMESTAMP_FILE.write_text(datetime.now().isoformat())
 
-print(f"✅ Indexed {len(index.docstore.docs)} new or modified note(s) into ./brain")
+print(f"✅ Indexed {len(docs)} new or modified note(s) into ./brain")
