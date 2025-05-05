@@ -1,3 +1,5 @@
+import os
+
 from dotenv import load_dotenv
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.vector_stores.chroma import ChromaVectorStore
@@ -5,9 +7,14 @@ from pathlib import Path
 import chromadb
 import shutil
 import subprocess
-import sys
 
 load_dotenv()
+
+# Build reverse map from .env
+reverse_map = {}
+for key, value in os.environ.items():
+    if key.startswith("SENSITIVE_"):
+        reverse_map[value] = key.removeprefix("SENSITIVE_").replace("_", " ")
 
 chroma_client = chromadb.PersistentClient(path="./brain")
 chroma_collection = chroma_client.get_or_create_collection("elycia")
@@ -27,10 +34,13 @@ while True:
         break
 
     response = query_engine.query(query)
+    output = str(response)
+    for obfuscated, original in reverse_map.items():
+        output = output.replace(obfuscated, original)
 
     # Create temporary markdown preview file
     preview_file = Path("__query_preview__.md")
-    preview_file.write_text(f"# ❓ {query}\n\n{str(response)}", encoding="utf-8")
+    preview_file.write_text(f"# ❓ {query}\n\n{output}", encoding="utf-8")
 
     # Open in available editor
     if shutil.which("code"):
